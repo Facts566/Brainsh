@@ -15,7 +15,6 @@ make
 
 ## Running a Brainsh file
 
-```bash
 bsh examples/hello.bsh
 
 ## Commands
@@ -39,7 +38,6 @@ d       Split value into tens and ones
 
 ## Example
 
-```bash
 ,N
 >,N
 <[->+<]>
