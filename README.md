@@ -12,10 +12,13 @@ Brainsh is an esoteric programming language based on Brainfuck. It adds a few ex
 ```bash
 cd Brainsh/bsh
 make
+```
 
 ## Running a Brainsh file
 
+```bash
 bsh examples/hello.bsh
+```
 
 ## Commands
 
@@ -38,7 +41,9 @@ d       Split value into tens and ones
 
 ## Example
 
+```bash
 ,N
 >,N
 <[->+<]>
 #
+```
