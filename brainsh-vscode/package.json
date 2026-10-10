@@ -1,0 +1,27 @@
+{
+    "name": "brainsh",
+    "displayName": "Brainsh",
+    "description": "Подсветка синтаксиса для языка Brainsh",
+    "version": "0.0.1",
+    "engines": {
+        "vscode": "^1.60.0"
+    },
+    "categories": ["Programming Languages"],
+    "contributes": {
+        "languages": [
+            {
+                "id": "brainsh",
+                "aliases": ["Brainsh"],
+                "extensions": [".bsh"],
+                "configuration": "./language-configuration.json"
+            }
+        ],
+        "grammars": [
+            {
+                "language": "brainsh",
+                "scopeName": "source.brainsh",
+                "path": "./syntaxes/brainsh.tmLanguage.json"
+            }
+        ]
+    }
+}

@@ -1,0 +1,72 @@
+{
+  "name": "Brainsh",
+  "scopeName": "source.brainsh",
+  "patterns": [
+    { "include": "#macros" },
+    { "include": "#keywords" },
+    { "include": "#io" },
+    { "include": "#movement" },
+    { "include": "#math" },
+    { "include": "#digits" },
+    { "include": "#loops" },
+    { "include": "#comments" }
+  ],
+  "repository": {
+    "macros": {
+      "patterns": [
+        {
+          "name": "entity.name.function.brainsh",
+          "match": "@[a-zA-Z_][a-zA-Z0-9_]*"
+        },
+        {
+          "name": "keyword.operator.assignment.brainsh",
+          "match": "="
+        }
+      ]
+    },
+    "keywords": {
+      "patterns": [{
+        "name": "keyword.control.brainsh",
+        "match": "[NS]"
+      }]
+    },
+    "io": {
+      "patterns": [{
+        "name": "support.function.brainsh",
+        "match": "[#.,]"
+      }]
+    },
+    "movement": {
+      "patterns": [{
+        "name": "keyword.operator.movement.brainsh",
+        "match": "[<>]"
+      }]
+    },
+    "math": {
+      "patterns": [{
+        "name": "keyword.operator.math.brainsh",
+        "match": "[+\\-]"
+      }]
+    },
+    "digits": {
+      "patterns": [{
+        "name": "constant.numeric.brainsh",
+        "match": "[0-9]"
+      }]
+    },
+    "loops": {
+      "patterns": [
+        {
+          "name": "punctuation.definition.loop.brainsh",
+          "match": "[\\[\\]]"
+        }
+      ]
+    },
+    "comments": {
+      "patterns": [{
+        "name": "comment.line.brainsh",
+        "match": "//.*$"
+      }]
+    }
+  }
+}
