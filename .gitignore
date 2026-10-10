@@ -1,4 +1,4 @@
 *.o
 *.tmp
 .vscode/
-.idea/
+.idea/bsh/bsh
