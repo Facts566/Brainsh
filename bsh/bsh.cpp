@@ -8,16 +8,16 @@
 
 using namespace std;
 
-// Таблица макросов
+// Macro table
 map<string, string> macros;
 
-// Проверка допустимых символов (только для финального кода)
+// Check for allowed characters (final code only)
 bool isValidChar(char c) {
     string valid = "><+-.,[]()#NSd:;{}@/0123456789 \n\t";
     return valid.find(c) != string::npos;
 }
 
-// Разворачивание макросов в тексте
+// Expand macros in the source text
 string expandMacros(const string& src) {
     string result;
     size_t i = 0;
@@ -47,7 +47,7 @@ int main(int argc, char* argv[]) {
         return 1;
     }
 
-    // 1. Читаем программу
+    // 1. Read the program
     ifstream file(argv[1]);
     if (!file.is_open()) {
         cerr << "Не удалось открыть файл: " << argv[1] << endl;
@@ -57,7 +57,7 @@ int main(int argc, char* argv[]) {
                     istreambuf_iterator<char>());
     file.close();
 
-    // 2. Убираем комментарии // ...
+    // 2. Strip // ... comments
     string noComments;
     for (size_t i = 0; i < program.size(); i++) {
         if (program[i] == '/' && i + 1 < program.size() && program[i + 1] == '/') {
@@ -68,7 +68,7 @@ int main(int argc, char* argv[]) {
         noComments += program[i];
     }
 
-    // 3. Читаем макросы @имя = ... и удаляем их из текста
+    // 3. Read @name = ... macros and remove them from the text
     string noMacros;
     for (size_t i = 0; i < noComments.size(); i++) {
         if (noComments[i] == '@') {
@@ -89,10 +89,10 @@ int main(int argc, char* argv[]) {
         noMacros += noComments[i];
     }
 
-    // 4. Разворачиваем макросы
+    // 4. Expand macros
     program = expandMacros(noMacros);
 
-    // 5. Проверка допустимых символов (только для команд, не для макросов)
+    // 5. Check for allowed characters (commands only, not macros)
     {
         int line = 1;
         for (size_t i = 0; i < program.size(); i++) {
@@ -105,7 +105,7 @@ int main(int argc, char* argv[]) {
         }
     }
 
-    // 6. Проверка парности скобок
+    // 6. Check that brackets are balanced
     {
         int balance = 0;
         int paren = 0;
@@ -139,13 +139,13 @@ int main(int argc, char* argv[]) {
         }
     }
 
-    // 7. Память
+    // 7. Memory
     vector<unsigned char> tape(30000, 0);
     int ptr = 0;
     int pc = 0;
     stack<int> loop_stack;
 
-    // 8. Выполнение
+    // 8. Execution
     while (pc < (int)program.size()) {
         char cmd = program[pc];
 
@@ -215,7 +215,7 @@ int main(int argc, char* argv[]) {
                 break;
 
             case '(':
-                // Выполняется один раз, если значение ячейки — цифра (48-57)
+                // Runs once if the cell holds a digit (48-57)
                 if (tape[ptr] < 48 || tape[ptr] > 57) {
                     int depth = 1;
                     while (depth > 0) {
@@ -241,7 +241,7 @@ int main(int argc, char* argv[]) {
             default: break;
         }
 
-        // Проверка границ ленты
+        // Check tape bounds
         if (ptr < 0 || ptr >= (int)tape.size()) {
             cerr << "Ошибка: указатель вышел за границы ленты" << endl;
             return 1;

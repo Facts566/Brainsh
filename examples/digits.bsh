@@ -1,23 +1,23 @@
-// () — условие: блок выполняется ОДИН РАЗ, если в ячейке цифра (48-57, символы '0'-'9')
-// Важно: :N прибавляет N, ;N вычитает N (это не присваивание!)
+// () is a condition: the block runs ONCE if the cell holds a digit (48-57, '0'-'9')
+// Note: :N adds N, ;N subtracts N (these are not assignments!)
 
-// --- Простое условие ---
-:52(.)      // 52 = '4' — цифра, блок выполнится, напечатает '4'
-:81(.)      // 52 + 81 = 133 — не цифра, блок пропущен
-;133        // в ячейке 133 — обнуляем
+// --- Simple condition ---
+:52(.)      // 52 = '4' is a digit, block runs and prints '4'
+:81(.)      // 52 + 81 = 133 is not a digit, block is skipped
+;133        // cell holds 133, reset it
 
-// значение в ячейке 0, счётчик в ячейке 1, указатель стоит на счётчике
+// the value lives in cell 0, the counter in cell 1, pointer sits on the counter
 
-// --- Печатаем чётные цифры: 0 2 4 6 8 ---
+// --- Print even digits: 0 2 4 6 8 ---
 :48>:5
 [
   <(. :2)>;1
 ]
 
-// счётчик обнулился сам, в ячейке 0 осталось 58 — обнуляем и задаём 49
+// the counter zeroed itself, cell 0 holds 58 - reset it and set 49
 <;58:49>:5
 
-// --- Печатаем нечётные цифры: 1 3 5 7 9 ---
+// --- Print odd digits: 1 3 5 7 9 ---
 [
   <(. :2)>;1
 ]
