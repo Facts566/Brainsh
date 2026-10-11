@@ -13,7 +13,7 @@ map<string, string> macros;
 
 // Проверка допустимых символов (только для финального кода)
 bool isValidChar(char c) {
-    string valid = "><+-.,[]#NSd:;{}@/0123456789 \n\t";
+    string valid = "><+-.,[]()#NSd:;{}@/0123456789 \n\t";
     return valid.find(c) != string::npos;
 }
 
@@ -108,6 +108,7 @@ int main(int argc, char* argv[]) {
     // 6. Проверка парности скобок
     {
         int balance = 0;
+        int paren = 0;
         int line = 1;
         for (size_t i = 0; i < program.size(); i++) {
             if (program[i] == '\n') line++;
@@ -119,9 +120,21 @@ int main(int argc, char* argv[]) {
                     return 1;
                 }
             }
+            if (program[i] == '(') paren++;
+            if (program[i] == ')') {
+                paren--;
+                if (paren < 0) {
+                    cerr << "Строка " << line << ": лишняя ')'" << endl;
+                    return 1;
+                }
+            }
         }
         if (balance > 0) {
             cerr << "Ошибка: не закрыта '[' (" << balance << " шт.)" << endl;
+            return 1;
+        }
+        if (paren > 0) {
+            cerr << "Ошибка: не закрыта '(' (" << paren << " шт.)" << endl;
             return 1;
         }
     }
@@ -198,6 +211,22 @@ int main(int argc, char* argv[]) {
                     }
                 } else {
                     loop_stack.push(pc);
+                }
+                break;
+
+            case '(':
+                // Выполняется один раз, если значение ячейки — цифра (48-57)
+                if (tape[ptr] < 48 || tape[ptr] > 57) {
+                    int depth = 1;
+                    while (depth > 0) {
+                        pc++;
+                        if (pc >= (int)program.size()) {
+                            cerr << "Ошибка: не закрыта '('" << endl;
+                            return 1;
+                        }
+                        if (program[pc] == '(') depth++;
+                        else if (program[pc] == ')') depth--;
+                    }
                 }
                 break;
 

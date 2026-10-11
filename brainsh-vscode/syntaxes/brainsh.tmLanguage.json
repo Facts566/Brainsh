@@ -59,6 +59,10 @@
         {
           "name": "punctuation.definition.loop.brainsh",
           "match": "[\\[\\]]"
+        },
+        {
+          "name": "punctuation.definition.condition.brainsh",
+          "match": "[\\(\\)]"
         }
       ]
     },
