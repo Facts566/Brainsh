@@ -40,6 +40,7 @@ bsh examples/hello.bsh
 | `d` | Split value into tens and ones |
 | `:n` | Repeat `+` n times |
 | `;n` | Repeat `-` n times |
+| `@`| Declares a macro|
 | `//` | Comment |
 
 ## Conditions
