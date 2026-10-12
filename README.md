@@ -40,19 +40,28 @@ bsh examples/hello.bsh
 | `d` | Split value into tens and ones |
 | `m` | Multiply the current cell by the cell on the right |
 | `r` | Put a random number from 1 to 255 into the cell |
+| `:n` | Repeat `+` n times |
+| `;n` | Repeat `-` n times |
+| `@` | Declares a macro |
+| `%file` | Include another file, making its macros available |
+| `//` | Comment |
+
+## Arithmetic
 
 `m` reads the cell on the right, multiplies the two values and stores the
 product back in the current cell. Like every other cell value it wraps around
 at 256, so `255 * 3 = 765` becomes `253`.
 
 ```bash
-:5 >:7 <m#     # prints 35
+:5 >:7 <m#     # 5 * 7 = 35
 ```
-| `:n` | Repeat `+` n times |
-| `;n` | Repeat `-` n times |
-| `@` | Declares a macro |
-| `%file` | Include another file, making its macros available |
-| `//` | Comment |
+
+`r` puts a random number from 1 to 255 into the current cell. The generator is
+seeded from the clock, so the value differs on every run.
+
+```bash
+r#             # prints some number between 1 and 255
+```
 
 ## Including files
 
