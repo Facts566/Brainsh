@@ -2,14 +2,16 @@
   "name": "Brainsh",
   "scopeName": "source.brainsh",
   "patterns": [
+    { "include": "#comments" },
+    { "include": "#include" },
     { "include": "#macros" },
     { "include": "#keywords" },
     { "include": "#io" },
     { "include": "#movement" },
     { "include": "#math" },
+    { "include": "#random" },
     { "include": "#digits" },
-    { "include": "#loops" },
-    { "include": "#comments" }
+    { "include": "#loops" }
   ],
   "repository": {
     "macros": {
@@ -27,7 +29,7 @@
     "keywords": {
       "patterns": [{
         "name": "keyword.control.brainsh",
-        "match": "[NS]"
+        "match": "[NSd]"
       }]
     },
     "io": {
@@ -43,10 +45,33 @@
       }]
     },
     "math": {
+      "patterns": [
+        {
+          "name": "keyword.operator.repeat.brainsh",
+          "match": "[:;]"
+        },
+        {
+          "name": "keyword.operator.math.brainsh",
+          "match": "[+\\-m]"
+        }
+      ]
+    },
+    "random": {
       "patterns": [{
-        "name": "keyword.operator.math.brainsh",
-        "match": "[+\\-]"
+        "name": "support.function.random.brainsh",
+        "match": "r"
       }]
+    },
+    "include": {
+      "patterns": [
+        {
+          "match": "(%)([^\"\\s]*|\"[^\"]*\")",
+          "captures": {
+            "1": { "name": "punctuation.definition.include.brainsh" },
+            "2": { "name": "string.unquoted.include.brainsh" }
+          }
+        }
+      ]
     },
     "digits": {
       "patterns": [{

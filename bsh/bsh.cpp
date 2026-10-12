@@ -4,7 +4,10 @@
 #include <stack>
 #include <string>
 #include <map>
+#include <set>
 #include <cctype>
+#include <cstdlib>
+#include <ctime>
 
 using namespace std;
 
@@ -13,12 +16,108 @@ map<string, string> macros;
 
 // Check for allowed characters (final code only)
 bool isValidChar(char c) {
-    string valid = "><+-.,[]()#NSd:;{}@/0123456789 \n\t";
+    string valid = "><+-.,[]()#NSdmr%:;{}@/0123456789 \n\t";
     return valid.find(c) != string::npos;
 }
 
-// Expand macros in the source text
-string expandMacros(const string& src) {
+// Strip // ... comments
+string stripComments(const string& src) {
+    string out;
+    for (size_t i = 0; i < src.size(); i++) {
+        if (src[i] == '/' && i + 1 < src.size() && src[i + 1] == '/') {
+            while (i < src.size() && src[i] != '\n') i++;
+            out += '\n';
+            continue;
+        }
+        out += src[i];
+    }
+    return out;
+}
+
+// Read a whole file into a string
+bool readFile(const string& path, string& out) {
+    ifstream f(path);
+    if (!f.is_open()) return false;
+    out.assign((istreambuf_iterator<char>(f)), istreambuf_iterator<char>());
+    return true;
+}
+
+// Characters allowed in an include path
+bool isPathChar(char c) {
+    return isalnum((unsigned char)c) || c == '.' || c == '_' || c == '-' || c == '/';
+}
+
+// Inline %file.bsh directives recursively.
+// Macros defined in the included files are picked up later by extractMacros.
+string processIncludes(const string& src, const string& baseDir, set<string>& seen) {
+    string out;
+    for (size_t i = 0; i < src.size(); i++) {
+        if (src[i] != '%') {
+            out += src[i];
+            continue;
+        }
+
+        // %"path" or %path (reads until whitespace or end of line)
+        string path;
+        bool quoted = (i + 1 < src.size() && src[i + 1] == '"');
+        if (quoted) {
+            size_t j = i + 2;
+            while (j < src.size() && src[j] != '"' && src[j] != '\n') j++;
+            if (j >= src.size() || src[j] != '"') {
+                cerr << "Ошибка: не закрыта кавычка в имени файла" << endl;
+                exit(1);
+            }
+            path = src.substr(i + 2, j - i - 2);
+            i = j;
+        } else {
+            size_t j = i + 1;
+            while (j < src.size() && !isspace((unsigned char)src[j])) j++;
+            path = src.substr(i + 1, j - i - 1);
+            i = j - 1;
+            // Unquoted names must look like plain filenames
+            for (char c : path) {
+                if (!isPathChar(c)) {
+                    cerr << "Ошибка: недопустимый символ '" << c << "' в имени файла"
+                         << " (используй кавычки)" << endl;
+                    exit(1);
+                }
+            }
+        }
+
+        if (path.empty()) {
+            cerr << "Ошибка: после '%' нужно имя файла" << endl;
+            exit(1);
+        }
+
+        // Resolve relative to the including file first, then the working directory
+        string full = path;
+        if (full[0] != '/' && !baseDir.empty()) {
+            string candidate = baseDir + "/" + path;
+            ifstream probe(candidate);
+            if (probe.is_open()) full = candidate;
+        }
+
+        if (seen.count(full)) {
+            // Already included, skip to avoid an infinite loop
+            continue;
+        }
+        seen.insert(full);
+
+        string content;
+        if (!readFile(full, content)) {
+            cerr << "Не удалось открыть файл: " << full << endl;
+            exit(1);
+        }
+
+        out += processIncludes(stripComments(content), baseDir, seen);
+        out += '\n';
+    }
+    return out;
+}
+
+// Expand macros in the source text.
+// Bodies are expanded recursively, so a macro may call other macros.
+string expandMacros(const string& src, set<string>& active) {
     string result;
     size_t i = 0;
     while (i < src.size()) {
@@ -26,12 +125,17 @@ string expandMacros(const string& src) {
             size_t j = i + 1;
             while (j < src.size() && isalnum(src[j])) j++;
             string name = src.substr(i + 1, j - i - 1);
-            if (macros.count(name)) {
-                result += macros[name];
-            } else {
+            if (!macros.count(name)) {
                 cerr << "Ошибка: неизвестный макрос @" << name << endl;
                 exit(1);
             }
+            if (active.count(name)) {
+                cerr << "Ошибка: макрос @" << name << " вызывает сам себя" << endl;
+                exit(1);
+            }
+            active.insert(name);
+            result += expandMacros(macros[name], active);
+            active.erase(name);
             i = j;
         } else {
             result += src[i];
@@ -58,14 +162,18 @@ int main(int argc, char* argv[]) {
     file.close();
 
     // 2. Strip // ... comments
-    string noComments;
-    for (size_t i = 0; i < program.size(); i++) {
-        if (program[i] == '/' && i + 1 < program.size() && program[i + 1] == '/') {
-            while (i < program.size() && program[i] != '\n') i++;
-            noComments += '\n';
-            continue;
-        }
-        noComments += program[i];
+    string noComments = stripComments(program);
+
+    // 2.5. Inline %file.bsh includes so their macros become available
+    {
+        string baseDir;
+        string dir(argv[1]);
+        size_t slash = dir.find_last_of('/');
+        if (slash != string::npos) baseDir = dir.substr(0, slash);
+
+        set<string> seen;
+        seen.insert(dir);
+        noComments = processIncludes(noComments, baseDir, seen);
     }
 
     // 3. Read @name = ... macros and remove them from the text
@@ -90,7 +198,8 @@ int main(int argc, char* argv[]) {
     }
 
     // 4. Expand macros
-    program = expandMacros(noMacros);
+    set<string> active;
+    program = expandMacros(noMacros, active);
 
     // 5. Check for allowed characters (commands only, not macros)
     {
@@ -146,6 +255,7 @@ int main(int argc, char* argv[]) {
     stack<int> loop_stack;
 
     // 8. Execution
+    srand((unsigned)time(NULL));
     while (pc < (int)program.size()) {
         char cmd = program[pc];
 
@@ -154,6 +264,17 @@ int main(int argc, char* argv[]) {
             case '<': ptr--; break;
             case '+': tape[ptr]++; break;
             case '-': tape[ptr]--; break;
+            case 'm': {
+                if (ptr + 1 >= (int)tape.size()) {
+                    cerr << "Ошибка: для 'm' нужна соседняя ячейка справа" << endl;
+                    return 1;
+                }
+                tape[ptr] = (unsigned char)(tape[ptr] * tape[ptr + 1]);
+                break;
+            }
+            case 'r':
+                tape[ptr] = (unsigned char)(1 + rand() % 255);
+                break;
             case '.': cout << tape[ptr]; break;
             case ',': cin >> tape[ptr]; break;
 

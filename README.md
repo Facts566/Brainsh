@@ -38,10 +38,41 @@ bsh examples/hello.bsh
 | `N` | Subtract 48 (character → number) |
 | `S` | Add 48 (number → character) |
 | `d` | Split value into tens and ones |
+| `m` | Multiply the current cell by the cell on the right |
+| `r` | Put a random number from 1 to 255 into the cell |
+
+`m` reads the cell on the right, multiplies the two values and stores the
+product back in the current cell. Like every other cell value it wraps around
+at 256, so `255 * 3 = 765` becomes `253`.
+
+```bash
+:5 >:7 <m#     # prints 35
+```
 | `:n` | Repeat `+` n times |
 | `;n` | Repeat `-` n times |
-| `@`| Declares a macro|
+| `@` | Declares a macro |
+| `%file` | Include another file, making its macros available |
 | `//` | Comment |
+
+## Including files
+
+`%file.bsh` inlines another file, so the macros defined in it can be called
+from the current program. The name is read until whitespace; use quotes if the
+name contains spaces: `%"my lib.bsh"`. Paths are resolved relative to the
+including file first, then to the working directory. Including the same file
+twice is safe — it is only processed once.
+
+```
+// lib.bsh
+@put = .[-]
+
+// main.bsh
+%lib.bsh
+:72@put        // prints "H"
+```
+
+Macros may call other macros, including ones from included files. A macro that
+calls itself is reported as an error instead of looping forever.
 
 ## Conditions
 
