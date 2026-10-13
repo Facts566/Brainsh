@@ -7,6 +7,7 @@
         "vscode": "^1.60.0"
     },
     "categories": ["Programming Languages"],
+    "icon": "brainsh.png",
     "contributes": {
         "languages": [
             {
@@ -21,6 +22,12 @@
                 "language": "brainsh",
                 "scopeName": "source.brainsh",
                 "path": "./syntaxes/brainsh.tmLanguage.json"
+            }
+        ],
+        "icons": [
+            {
+                "icon": "brainsh.png",
+                "extensions": [".bsh"]
             }
         ]
     }
