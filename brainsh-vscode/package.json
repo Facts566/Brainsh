@@ -2,7 +2,7 @@
     "name": "brainsh",
     "displayName": "Brainsh",
     "description": "Подсветка синтаксиса для языка Brainsh",
-    "version": "0.0.2",
+    "version": "0.0.3",
     "publisher": "Facts566",
     "engines": {
         "vscode": "^1.60.0"
@@ -15,7 +15,11 @@
                 "id": "brainsh",
                 "aliases": ["Brainsh"],
                 "extensions": [".bsh"],
-                "configuration": "./language-configuration.json"
+                "configuration": "./language-configuration.json",
+                "icon": {
+                    "light": "./brainsh.png",
+                    "dark": "./brainsh.png"
+                }
             }
         ],
         "grammars": [
@@ -23,12 +27,6 @@
                 "language": "brainsh",
                 "scopeName": "source.brainsh",
                 "path": "./syntaxes/brainsh.tmLanguage.json"
-            }
-        ],
-        "icons": [
-            {
-                "icon": "brainsh.png",
-                "extensions": [".bsh"]
             }
         ]
     }
