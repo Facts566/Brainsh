@@ -14,6 +14,23 @@
     { "include": "#loops" }
   ],
   "repository": {
+    "comments": {
+      "patterns": [
+        { "include": "#comment" }
+      ]
+    },
+    "comment": {
+      "patterns": [
+        {
+          "name": "comment.block.brainsh",
+          "begin": "\\{",
+          "end": "\\}",
+          "patterns": [
+            { "include": "#comment" }
+          ]
+        }
+      ]
+    },
     "macros": {
       "patterns": [
         {
@@ -88,15 +105,6 @@
         {
           "name": "punctuation.definition.condition.brainsh",
           "match": "[\\(\\)]"
-        }
-      ]
-    },
-    "comments": {
-      "patterns": [
-        {
-          "name": "comment.block.brainsh",
-          "begin": "\\{",
-          "end": "\\}"
         }
       ]
     }
