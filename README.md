@@ -65,7 +65,7 @@ bsh examples/hello.bsh
 | `;n` | Repeat `-` n times |
 | `@` | Declares a macro |
 | `%file` | Include another file, making its macros available |
-| `//` | Comment |
+| `{ … }` | Comment |
 
 ## Arithmetic
 
@@ -93,12 +93,12 @@ including file first, then to the working directory. Including the same file
 twice is safe — it is only processed once.
 
 ```
-// lib.bsh
+{ lib.bsh }
 @put = .[-]
 
-// main.bsh
+{ main.bsh }
 %lib.bsh
-:72@put        // prints "H"
+:72@put        { prints "H" }
 ```
 
 Macros may call other macros, including ones from included files. A macro that
@@ -111,20 +111,37 @@ Round brackets run their block **once** if the current cell holds a digit
 `[ ]`, they do not loop.
 
 ```bash
-:52(.)      // 52 = '4' is a digit, so '4' is printed
-:81(.)      // 52 + 81 = 133 is not a digit, so nothing is printed
+:52(.)      { 52 = '4' is a digit, so '4' is printed }
+:81(.)      { 52 + 81 = 133 is not a digit, so nothing is printed }
 ```
 
 Combined with a loop, this lets you walk over a range of characters:
 
 ```bash
-:48>:5      // start at '0', counter = 5
+:48>:5      { start at '0', counter = 5 }
 [
-  <(. :2)>;1   // print the digit, add 2, decrement the counter
+  <(. :2)>;1   { print the digit, add 2, decrement the counter }
 ]
 ```
 
 This prints `02468`.
+
+## Comments
+
+Comments are written between `{` and `}`. They may sit on their own line, run
+inline after code, and span several lines. They nest, so a brace inside a
+comment does not end it early.
+
+```bash
+{ This is a comment }
+:52(.)    { and so is this }
+{
+  Comments can also
+  cover several lines.
+}
+```
+
+An unbalanced brace is reported with its line number.
 
 ## Example
 

@@ -1,17 +1,17 @@
-// A reusable library. Include it with %lib.bsh and call the macros below.
+{ A reusable library. Include it with %lib.bsh and call the macros below. }
 
-// @put — print the character in the current cell, then clear it
+{ @put — print the character in the current cell, then clear it }
 @put = .[-]
 
-// @newline — print a line break
+{ @newline — print a line break }
 @newline = :10@put
 
-// @hi — print "Hi"
+{ @hi — print "Hi" }
 @hi = :72@put:105@put@newline
 
-// @countdown — print "321"
+{ @countdown — print "321" }
 @countdown = :51@put:50@put:49@put@newline
 
-// @square — multiply the current cell by the cell on the right,
-//          then clear the right cell
+{ @square — multiply the current cell by the cell on the right,
+  then clear the right cell }
 @square = m >[-] <

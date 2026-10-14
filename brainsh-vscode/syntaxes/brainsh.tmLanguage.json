@@ -92,10 +92,13 @@
       ]
     },
     "comments": {
-      "patterns": [{
-        "name": "comment.line.brainsh",
-        "match": "//.*$"
-      }]
+      "patterns": [
+        {
+          "name": "comment.block.brainsh",
+          "begin": "\\{",
+          "end": "\\}"
+        }
+      ]
     }
   }
 }

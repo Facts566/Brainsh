@@ -1,23 +1,23 @@
-// () is a condition: the block runs ONCE if the cell holds a digit (48-57, '0'-'9')
-// Note: :N adds N, ;N subtracts N (these are not assignments!)
+{ () is a condition: the block runs ONCE if the cell holds a digit (48-57, '0'-'9')
+  Note: :N adds N, ;N subtracts N (these are not assignments!) }
 
-// --- Simple condition ---
-:52(.)      // 52 = '4' is a digit, block runs and prints '4'
-:81(.)      // 52 + 81 = 133 is not a digit, block is skipped
-;133        // cell holds 133, reset it
+{ --- Simple condition --- }
+:52(.)      { 52 = '4' is a digit, block runs and prints '4' }
+:81(.)      { 52 + 81 = 133 is not a digit, block is skipped }
+;133        { cell holds 133, reset it }
 
-// the value lives in cell 0, the counter in cell 1, pointer sits on the counter
+{ the value lives in cell 0, the counter in cell 1, pointer sits on the counter }
 
-// --- Print even digits: 0 2 4 6 8 ---
+{ --- Print even digits: 0 2 4 6 8 --- }
 :48>:5
 [
   <(. :2)>;1
 ]
 
-// the counter zeroed itself, cell 0 holds 58 - reset it and set 49
+{ the counter zeroed itself, cell 0 holds 58 - reset it and set 49 }
 <;58:49>:5
 
-// --- Print odd digits: 1 3 5 7 9 ---
+{ --- Print odd digits: 1 3 5 7 9 --- }
 [
   <(. :2)>;1
 ]

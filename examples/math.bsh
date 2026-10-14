@@ -1,21 +1,21 @@
-// Commands: m, r and %include
-// Note: :N adds N, ;N subtracts N (these are not assignments!)
+{ Commands: m, r and %include }
+{ Note: :N adds N, ;N subtracts N (these are not assignments!) }
 
 %lib.bsh
 
-// macros from the included file are available
+{ macros from the included file are available }
 @hi
 @countdown
 
-// m — multiply the current cell by the cell on the right: 5 * 7 = 35
+{ m — multiply the current cell by the cell on the right: 5 * 7 = 35 }
 :5 >:7 < m #
 
-// m wraps like any other cell value: 255 * 3 = 765 -> 253
+{ m wraps like any other cell value: 255 * 3 = 765 -> 253 }
 >[-] :3 <[-] :255 m #
 
-// r — put a random number from 1 to 255 into the cell
-// the value changes on every run
+{ r — put a random number from 1 to 255 into the cell
+  the value changes on every run }
 [-] r #
 
-// @square from the library: 6 * 6 = 36
+{ @square from the library: 6 * 6 = 36 }
 >[-] :6 <[-] :6 @square #

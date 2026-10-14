@@ -20,6 +20,7 @@ more comfortably:
 | `:n` `;n` | Repeat `+` or `-` n times |
 | `@name` | Declare and call macros |
 | `%file.bsh` | Include another file, making its macros available |
+| `{ … }` | Comment |
 
 ## Installation
 

@@ -16,20 +16,46 @@ map<string, string> macros;
 
 // Check for allowed characters (final code only)
 bool isValidChar(char c) {
-    string valid = "><+-.,[]()#NSdmr%:;{}@/0123456789 \n\t";
+    string valid = "><+-.,[]()#NSdmr%:;@/0123456789 \n\t";
     return valid.find(c) != string::npos;
 }
 
-// Strip // ... comments
+// Strip { ... } comments.
+// They may span several lines and sit inline after code. They nest.
 string stripComments(const string& src) {
     string out;
+    int depth = 0;
+    int line = 1;
+    int openLine = 0;
+
     for (size_t i = 0; i < src.size(); i++) {
-        if (src[i] == '/' && i + 1 < src.size() && src[i + 1] == '/') {
-            while (i < src.size() && src[i] != '\n') i++;
-            out += '\n';
+        char c = src[i];
+        if (c == '\n') {
+            line++;
+            out += '\n';   // keep line numbers stable for later checks
             continue;
         }
-        out += src[i];
+
+        if (c == '{') {
+            if (depth == 0) openLine = line;
+            depth++;
+            continue;
+        }
+        if (c == '}') {
+            if (depth == 0) {
+                cerr << "Строка " << line << ": лишняя '}'" << endl;
+                exit(1);
+            }
+            depth--;
+            continue;
+        }
+
+        if (depth == 0) out += c;
+    }
+
+    if (depth > 0) {
+        cerr << "Ошибка: не закрыта '{' (открыта в строке " << openLine << ")" << endl;
+        exit(1);
     }
     return out;
 }
@@ -161,7 +187,7 @@ int main(int argc, char* argv[]) {
                     istreambuf_iterator<char>());
     file.close();
 
-    // 2. Strip // ... comments
+    // 2. Strip { ... } comments
     string noComments = stripComments(program);
 
     // 2.5. Inline %file.bsh includes so their macros become available
