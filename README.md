@@ -4,6 +4,25 @@
 
 Brainsh is an esoteric programming language based on Brainfuck. It adds a few extra commands to make working with numbers easier, while keeping the minimal spirit of the original.
 
+## Editor support
+
+Syntax highlighting for `.bsh` files is available as a VS Code extension.
+
+Download [`dist/brainsh-0.1.0.vsix`](dist/brainsh-0.1.0.vsix) and install it:
+
+```bash
+code --install-extension dist/brainsh-0.1.0.vsix
+```
+
+Or in VS Code: **Extensions** → **⋯** → **Install from VSIX…**
+
+To rebuild the package yourself you need [`@vscode/vsce`](https://www.npmjs.com/package/@vscode/vsce):
+
+```bash
+cd Brainsh/bsh
+make package
+```
+
 ## Requirements
 
 - `g++` (C++ compiler)

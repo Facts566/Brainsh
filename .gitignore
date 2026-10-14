@@ -4,3 +4,4 @@ bsh.exe
 *.tmp
 .vscode/
 .idea/
+.tools/

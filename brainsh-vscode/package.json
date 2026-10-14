@@ -1,19 +1,33 @@
 {
     "name": "brainsh",
     "displayName": "Brainsh",
-    "description": "Подсветка синтаксиса для языка Brainsh",
-    "version": "0.0.3",
+    "description": "Syntax highlighting for the Brainsh esoteric language",
+    "version": "0.1.0",
     "publisher": "Facts566",
+    "license": "MIT",
     "engines": {
         "vscode": "^1.60.0"
     },
     "categories": ["Programming Languages"],
+    "keywords": ["brainsh", "brainfuck", "esoteric", "language"],
     "icon": "brainsh.png",
+    "galleryBanner": {
+        "color": "#1F4E9C",
+        "theme": "dark"
+    },
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/Facts566/Brainsh.git"
+    },
+    "bugs": {
+        "url": "https://github.com/Facts566/Brainsh/issues"
+    },
+    "homepage": "https://github.com/Facts566/Brainsh#readme",
     "contributes": {
         "languages": [
             {
                 "id": "brainsh",
-                "aliases": ["Brainsh"],
+                "aliases": ["Brainsh", "brainsh"],
                 "extensions": [".bsh"],
                 "configuration": "./language-configuration.json",
                 "icon": {

@@ -16,4 +16,12 @@ install: bsh
 clean:
 	rm -f bsh/bsh
 
-.PHONY: all install clean
+# Build the distributable VS Code extension into dist/ at the repo root
+package:
+	@../tools/build-extension.sh
+
+# Install the extension into the running VS Code
+install-extension: package
+	@code --install-extension $$(ls ../dist/*.vsix | tail -1) --force
+
+.PHONY: all install clean package install-extension
