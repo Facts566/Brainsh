@@ -43,7 +43,7 @@ string stripComments(const string& src) {
         }
         if (c == '}') {
             if (depth == 0) {
-                cerr << "Строка " << line << ": лишняя '}'" << endl;
+                cerr << "Line " << line << ": unexpected '}'" << endl;
                 exit(1);
             }
             depth--;
@@ -54,7 +54,7 @@ string stripComments(const string& src) {
     }
 
     if (depth > 0) {
-        cerr << "Ошибка: не закрыта '{' (открыта в строке " << openLine << ")" << endl;
+        cerr << "Error: unclosed '{' (opened on line " << openLine << ")" << endl;
         exit(1);
     }
     return out;
@@ -90,7 +90,7 @@ string processIncludes(const string& src, const string& baseDir, set<string>& se
             size_t j = i + 2;
             while (j < src.size() && src[j] != '"' && src[j] != '\n') j++;
             if (j >= src.size() || src[j] != '"') {
-                cerr << "Ошибка: не закрыта кавычка в имени файла" << endl;
+                cerr << "Error: unclosed quote in the file name" << endl;
                 exit(1);
             }
             path = src.substr(i + 2, j - i - 2);
@@ -103,15 +103,15 @@ string processIncludes(const string& src, const string& baseDir, set<string>& se
             // Unquoted names must look like plain filenames
             for (char c : path) {
                 if (!isPathChar(c)) {
-                    cerr << "Ошибка: недопустимый символ '" << c << "' в имени файла"
-                         << " (используй кавычки)" << endl;
+                    cerr << "Error: invalid character '" << c << "' in the file name"
+                         << " (use quotes)" << endl;
                     exit(1);
                 }
             }
         }
 
         if (path.empty()) {
-            cerr << "Ошибка: после '%' нужно имя файла" << endl;
+            cerr << "Error: a file name is required after '%'" << endl;
             exit(1);
         }
 
@@ -131,7 +131,7 @@ string processIncludes(const string& src, const string& baseDir, set<string>& se
 
         string content;
         if (!readFile(full, content)) {
-            cerr << "Не удалось открыть файл: " << full << endl;
+            cerr << "Cannot open file: " << full << endl;
             exit(1);
         }
 
@@ -152,11 +152,11 @@ string expandMacros(const string& src, set<string>& active) {
             while (j < src.size() && isalnum(src[j])) j++;
             string name = src.substr(i + 1, j - i - 1);
             if (!macros.count(name)) {
-                cerr << "Ошибка: неизвестный макрос @" << name << endl;
+                cerr << "Error: unknown macro @" << name << endl;
                 exit(1);
             }
             if (active.count(name)) {
-                cerr << "Ошибка: макрос @" << name << " вызывает сам себя" << endl;
+                cerr << "Error: macro @" << name << " calls itself" << endl;
                 exit(1);
             }
             active.insert(name);
@@ -173,14 +173,14 @@ string expandMacros(const string& src, set<string>& active) {
 
 int main(int argc, char* argv[]) {
     if (argc < 2) {
-        cerr << "Использование: " << argv[0] << " <файл.bsh>" << endl;
+        cerr << "Usage: " << argv[0] << " <file.bsh>" << endl;
         return 1;
     }
 
     // 1. Read the program
     ifstream file(argv[1]);
     if (!file.is_open()) {
-        cerr << "Не удалось открыть файл: " << argv[1] << endl;
+        cerr << "Cannot open file: " << argv[1] << endl;
         return 1;
     }
     string program((istreambuf_iterator<char>(file)),
@@ -233,7 +233,7 @@ int main(int argc, char* argv[]) {
         for (size_t i = 0; i < program.size(); i++) {
             if (program[i] == '\n') line++;
             if (!isValidChar(program[i])) {
-                cerr << "Строка " << line << ": недопустимый символ '" 
+                cerr << "Line " << line << ": invalid character '" 
                      << program[i] << "'" << endl;
                 return 1;
             }
@@ -251,7 +251,7 @@ int main(int argc, char* argv[]) {
             if (program[i] == ']') {
                 balance--;
                 if (balance < 0) {
-                    cerr << "Строка " << line << ": лишняя ']'" << endl;
+                    cerr << "Line " << line << ": unexpected ']'" << endl;
                     return 1;
                 }
             }
@@ -259,17 +259,17 @@ int main(int argc, char* argv[]) {
             if (program[i] == ')') {
                 paren--;
                 if (paren < 0) {
-                    cerr << "Строка " << line << ": лишняя ')'" << endl;
+                    cerr << "Line " << line << ": unexpected ')'" << endl;
                     return 1;
                 }
             }
         }
         if (balance > 0) {
-            cerr << "Ошибка: не закрыта '[' (" << balance << " шт.)" << endl;
+            cerr << "Error: unclosed '[' (" << balance << " left open)" << endl;
             return 1;
         }
         if (paren > 0) {
-            cerr << "Ошибка: не закрыта '(' (" << paren << " шт.)" << endl;
+            cerr << "Error: unclosed '(' (" << paren << " left open)" << endl;
             return 1;
         }
     }
@@ -292,7 +292,7 @@ int main(int argc, char* argv[]) {
             case '-': tape[ptr]--; break;
             case 'm': {
                 if (ptr + 1 >= (int)tape.size()) {
-                    cerr << "Ошибка: для 'm' нужна соседняя ячейка справа" << endl;
+                    cerr << "Error: 'm' needs a cell on the right" << endl;
                     return 1;
                 }
                 tape[ptr] = (unsigned char)(tape[ptr] * tape[ptr + 1]);
@@ -317,7 +317,7 @@ int main(int argc, char* argv[]) {
                 pc++;
                 int count = 0;
                 if (pc >= (int)program.size() || !isdigit(program[pc])) {
-                    cerr << "Ошибка: после ':' нужно число" << endl;
+                    cerr << "Error: a number is required after ':'" << endl;
                     return 1;
                 }
                 while (pc < (int)program.size() && isdigit(program[pc])) {
@@ -332,7 +332,7 @@ int main(int argc, char* argv[]) {
                 pc++;
                 int count = 0;
                 if (pc >= (int)program.size() || !isdigit(program[pc])) {
-                    cerr << "Ошибка: после ';' нужно число" << endl;
+                    cerr << "Error: a number is required after ';'" << endl;
                     return 1;
                 }
                 while (pc < (int)program.size() && isdigit(program[pc])) {
@@ -350,7 +350,7 @@ int main(int argc, char* argv[]) {
                     while (depth > 0) {
                         pc++;
                         if (pc >= (int)program.size()) {
-                            cerr << "Ошибка: не закрыта '['" << endl;
+                            cerr << "Error: unclosed '['" << endl;
                             return 1;
                         }
                         if (program[pc] == '[') depth++;
@@ -368,7 +368,7 @@ int main(int argc, char* argv[]) {
                     while (depth > 0) {
                         pc++;
                         if (pc >= (int)program.size()) {
-                            cerr << "Ошибка: не закрыта '('" << endl;
+                            cerr << "Error: unclosed '('" << endl;
                             return 1;
                         }
                         if (program[pc] == '(') depth++;
@@ -390,7 +390,7 @@ int main(int argc, char* argv[]) {
 
         // Check tape bounds
         if (ptr < 0 || ptr >= (int)tape.size()) {
-            cerr << "Ошибка: указатель вышел за границы ленты" << endl;
+            cerr << "Error: the pointer left the tape" << endl;
             return 1;
         }
 
