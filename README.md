@@ -1,6 +1,6 @@
 # Brainsh
 
-![Иконка](bsh/brainsh.png)
+![Icon](bsh/brainsh.png)
 
 Brainsh is an esoteric programming language based on Brainfuck. It adds a few extra commands to make working with numbers easier, while keeping the minimal spirit of the original.
 
