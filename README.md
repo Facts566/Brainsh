@@ -146,8 +146,13 @@ An unbalanced brace is reported with its line number.
 ## Example
 
 ```bash
-,N
->,N
-<[->+<]>
-#
+@add = [-<+>] {declare a macro that adds and shifts left}
+
+,N>:10<m>,N {read the first number (tens and ones), convert ASCII to number}
+@add {add the tens and the ones}
+,N>:10<m>,N {read the second number (tens and ones), convert ASCII to number}
+@add {add the tens and the ones}
+@add {shift the second number one cell left}
+<@add {add the numbers together}
+<# {print the result}
 ```
