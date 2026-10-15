@@ -145,7 +145,7 @@ An unbalanced brace is reported with its line number.
 
 ## Example
 
-```brainfuck
+```bash
 @add = [-<+>] {declare a macro that adds and shifts left}
 
 ,N>:10<m>,N {read the first number (tens and ones), convert ASCII to number}
